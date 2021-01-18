@@ -1,4 +1,4 @@
-package br.com.renanrramos.springwebfluxdemo.controller;
+package br.com.renanrramos.springwebfluxdemo.main.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
