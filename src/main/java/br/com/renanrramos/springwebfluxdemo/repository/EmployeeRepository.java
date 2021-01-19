@@ -13,14 +13,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
-public class EmpolyeeRepository {
+public class EmployeeRepository {
 
     @Value("${initial.employees}")
     private int initialEmployees;
 
 	private List<Employee> EMPLOYEES = new ArrayList<>();
 
-	public EmpolyeeRepository() {
+	public EmployeeRepository() {
 	}
 
 	public Employee save(Employee e) {
@@ -40,7 +40,7 @@ public class EmpolyeeRepository {
 	}
 
     @Bean
-	public void getEmployeesList() {
+	public void createEmployeesList() {
 		for (int i = 0; i <= initialEmployees ; i++) {
 			EMPLOYEES.add(employeeGenerator(i));
 		}
@@ -65,7 +65,7 @@ public class EmpolyeeRepository {
 
 	private static Employee employeeGenerator(int id) {
 		return Employee.builder()
-				.department("Departament " + id)
+				.department("Department " + id)
 				.id(id).name("Empl " + id)
 				.build();
 	}

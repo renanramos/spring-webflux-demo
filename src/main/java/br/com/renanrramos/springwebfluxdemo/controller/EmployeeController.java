@@ -1,5 +1,6 @@
 package br.com.renanrramos.springwebfluxdemo.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.renanrramos.springwebfluxdemo.form.EmployeeForm;
 import br.com.renanrramos.springwebfluxdemo.messages.constants.Messages;
@@ -37,13 +39,24 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeService;
 
+	private URI uri;
+
 	@ResponseBody
 	@PostMapping
 	@ApiOperation(value = "Add new employee")
-	public ResponseEntity<Employee> create(@Valid @RequestBody EmployeeForm e) {
+	public ResponseEntity<Employee> create(@Valid @RequestBody EmployeeForm e, UriComponentsBuilder uriBuilder) {
 		Optional<Employee> empOptional = Optional.ofNullable(employeeService.create(e));
-		return ResponseEntity.ok(empOptional.orElseThrow(() -> 
-				new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM)));
+		
+		empOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM));
+
+		uri = uriBuilder.path("/employees/{id}")
+				.buildAndExpand(empOptional.get().getId())
+				.encode()
+				.toUri();
+		
+		return ResponseEntity
+			.status(HttpStatus.CREATED)
+				.location(uri).body(empOptional.get());
 	}
 
 	@ResponseBody

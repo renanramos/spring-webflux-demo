@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.renanrramos.springwebfluxdemo.form.EmployeeForm;
 import br.com.renanrramos.springwebfluxdemo.model.Employee;
-import br.com.renanrramos.springwebfluxdemo.repository.EmpolyeeRepository;
+import br.com.renanrramos.springwebfluxdemo.repository.EmployeeRepository;
 import br.com.renanrramos.springwebfluxdemo.service.EmployeeService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 public class EmployeeServiceImpl implements EmployeeService{
 
 	@Autowired
-	private EmpolyeeRepository employeeRepository;
+	private EmployeeRepository employeeRepository;
 	
 	@Override
 	public Employee create(EmployeeForm e) {
