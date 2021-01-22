@@ -1,4 +1,4 @@
-package br.com.renanrramos.springwebfluxdemo.controller;
+package br.com.renanrramos.springwebfluxdemo.controller.rest;
 
 import java.net.URI;
 import java.util.List;
@@ -44,8 +44,8 @@ public class EmployeeController {
 	@ResponseBody
 	@PostMapping
 	@ApiOperation(value = "Add new employee")
-	public ResponseEntity<Employee> create(@Valid @RequestBody EmployeeForm e, UriComponentsBuilder uriBuilder) {
-		Optional<Employee> empOptional = Optional.ofNullable(employeeService.create(e));
+	public ResponseEntity<Employee> create(@Valid @RequestBody EmployeeForm employee, UriComponentsBuilder uriBuilder) {
+		Optional<Employee> empOptional = Optional.ofNullable(employeeService.create(employee));
 		
 		empOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM));
 
