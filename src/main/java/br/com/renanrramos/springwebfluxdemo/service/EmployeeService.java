@@ -16,4 +16,6 @@ public interface EmployeeService {
 	Flux<List<Employee>> findAll();
 
 	void removeEmployee(int id);
+
+	Employee update(Employee e);
 }

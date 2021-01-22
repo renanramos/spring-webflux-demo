@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -70,18 +71,26 @@ public class EmployeeController {
 	@GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Get employee by id")
 	public ResponseEntity<Employee> findEmployee(@PathVariable("id") Integer id) {
-		return ResponseEntity.ok(employeeService.findById(id).blockOptional()
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND)));
+		return ResponseEntity.ok(employeeService.findById(id).block());
 	}
 
 	@ResponseBody
 	@DeleteMapping(path = "/{id}")
 	@ApiOperation(value = "Delete an employee")
 	public ResponseEntity<Object> removeEmployee(@PathVariable("id") int id) {
-		employeeService.findById(id)
-			.blockOptional()
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND));
 		employeeService.removeEmployee(id);
 		return ResponseEntity.ok().build();
+	}
+
+	@ResponseBody
+	@PutMapping(path = "/{id}")
+	@ApiOperation(value = "Update an employee")
+	public ResponseEntity<Employee> updateEmployee(@PathVariable("id") int id, @RequestBody EmployeeForm employeeForm) {
+		Employee employee = Employee.builder()
+				.id(id)
+				.name(employeeForm.getName())
+				.department(employeeForm.getDepartment())
+				.build();
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(employeeService.update(employee));
 	}
 }

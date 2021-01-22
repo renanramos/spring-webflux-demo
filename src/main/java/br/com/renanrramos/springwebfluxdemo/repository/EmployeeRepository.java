@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
+import br.com.renanrramos.springwebfluxdemo.messages.constants.Messages;
 import br.com.renanrramos.springwebfluxdemo.model.Employee;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,7 +40,21 @@ public class EmployeeRepository {
 	}
 
 	public void removeEmployee(int id) {
-		EMPLOYEES.remove(id);
+		getEmployeeById(id)
+			.blockOptional()
+			.ifPresent(emp -> EMPLOYEES.remove(id));
+	}
+
+	public Employee update(Employee e) {
+		
+		Employee employeeToBeUpdated = getEmployeeById(e.getId()).blockOptional().get();
+		BeanUtils.copyProperties(e, employeeToBeUpdated);
+
+		int index = EMPLOYEES.indexOf(employeeToBeUpdated);
+		
+		EMPLOYEES.set(index, employeeToBeUpdated);
+		
+		return employeeToBeUpdated;
 	}
 
     @Bean
@@ -46,15 +64,14 @@ public class EmployeeRepository {
 		}
 	}
 
-	private Mono<Employee> getEmployeeById(Integer id) {
-		Optional<Employee> employeeOptional = EMPLOYEES
-				.stream()
-				.filter(employee -> employee.getId().equals(id))
-				.findFirst();
-		
-		return employeeOptional.isPresent() ?
-				Mono.just(employeeOptional.get()) :
-				Mono.empty();
+	private Mono<Employee> getEmployeeById(int id) {
+		Optional<Employee> employeeOptional = EMPLOYEES.stream().filter(emp -> emp.getId() == id).findFirst();
+
+		if (!employeeOptional.isPresent()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND);
+		}
+
+		return Mono.just(employeeOptional.get());
 	}
 
 	private Employee addEmpolyee(Employee employee) {

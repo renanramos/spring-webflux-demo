@@ -3,9 +3,12 @@ package br.com.renanrramos.springwebfluxdemo.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.renanrramos.springwebfluxdemo.form.EmployeeForm;
+import br.com.renanrramos.springwebfluxdemo.messages.constants.Messages;
 import br.com.renanrramos.springwebfluxdemo.model.Employee;
 import br.com.renanrramos.springwebfluxdemo.repository.EmployeeRepository;
 import br.com.renanrramos.springwebfluxdemo.service.EmployeeService;
@@ -40,5 +43,10 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Override
 	public void removeEmployee(int id) {
 		employeeRepository.removeEmployee(id);
+	}
+
+	@Override
+	public Employee update(Employee e) {
+		return employeeRepository.update(e);
 	}	
 }
