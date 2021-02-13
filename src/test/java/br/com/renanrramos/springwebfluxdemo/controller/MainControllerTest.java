@@ -20,11 +20,11 @@ public class MainControllerTest {
 	private MainController mainController;
 
 	@Mock
-	private RedirectAttributes attributes;
+	private RedirectAttributes mockAttributes;
 
 	@Test
 	public void redirectToMainPage_shouldRedirectToSwaggerPage() {
-		RedirectView redirectedPage = mainController.redirectToMainPage(attributes);
+		RedirectView redirectedPage = mainController.redirectToMainPage(mockAttributes);
 		assertThat(redirectedPage.getUrl(), is("swagger-ui.html"));
 	}
 

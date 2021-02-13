@@ -50,28 +50,28 @@ public class EmployeeControllerTest {
 	private EmployeeController employeeController;
 
 	@Mock
-	private EmployeeService employeeService;
+	private EmployeeService mockEmployeeService;
 
 	@Mock
-	private UriComponentsBuilder uriBuilder;
+	private UriComponentsBuilder mockUriBuilder;
 
 	@Mock
-	private UriComponents uriComponents;
+	private UriComponents mockUriComponents;
 
 	private URI uri;
 
 	@Test
 	public void create_withValidEmployee_shouldCreateSuccessfully() {		
-		when(employeeService.create(any(EmployeeForm.class))).thenReturn(CommonUtils.getEmployeeInstance());
+		when(mockEmployeeService.create(any(EmployeeForm.class))).thenReturn(CommonUtils.getEmployeeInstance());
 		mockUriComponentsBuilder();
 
-		ResponseEntity<Employee> responseEntity = employeeController.create(CommonUtils.getEmployeeFormInstance(), uriBuilder);
+		ResponseEntity<Employee> responseEntity = employeeController.create(CommonUtils.getEmployeeFormInstance(), mockUriBuilder);
 
 		assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.CREATED));
 		assertThat(responseEntity.getBody().getId(), is(EMPLOYEE_ID));
 		assertThat(responseEntity.getBody().getName(), is(EMPLOYEE_NAME));
 		assertThat(responseEntity.getBody().getDepartment(), is(EMPLOYEE_DEPARTMENT));
-		verify(employeeService, times(1)).create(any(EmployeeForm.class));
+		verify(mockEmployeeService, times(1)).create(any(EmployeeForm.class));
 	}
 
 	@Test
@@ -80,19 +80,19 @@ public class EmployeeControllerTest {
 		ResponseStatusException badRequestException = getResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM);
 		EmployeeForm invalidForm = EmployeeForm.builder().name("").department(EMPLOYEE_DEPARTMENT).build();
 
-		when(employeeService.create(any(EmployeeForm.class))).thenThrow(badRequestException);
+		when(mockEmployeeService.create(any(EmployeeForm.class))).thenThrow(badRequestException);
 
 		try {
-			employeeController.create(invalidForm, uriBuilder);			
+			employeeController.create(invalidForm, mockUriBuilder);			
 		} catch (ResponseStatusException e) {
 			
 			assertThat(e.getStatus(), equalTo(badRequestException.getStatus()));
 			assertThat(e.getReason(), equalTo(badRequestException.getReason()));
 
-			verify(uriBuilder, never()).path(anyString());
-			verify(uriBuilder, never()).buildAndExpand(anyInt());
-			verify(uriComponents, never()).encode();
-			verify(uriComponents, never()).toUri();
+			verify(mockUriBuilder, never()).path(anyString());
+			verify(mockUriBuilder, never()).buildAndExpand(anyInt());
+			verify(mockUriComponents, never()).encode();
+			verify(mockUriComponents, never()).toUri();
 		}
 	}
 
@@ -102,19 +102,19 @@ public class EmployeeControllerTest {
 		ResponseStatusException badRequestException = getResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM);
 		EmployeeForm invalidForm = EmployeeForm.builder().name(EMPLOYEE_NAME).department("").build();
 
-		when(employeeService.create(any(EmployeeForm.class))).thenThrow(badRequestException);
+		when(mockEmployeeService.create(any(EmployeeForm.class))).thenThrow(badRequestException);
 
 		try {
-			employeeController.create(invalidForm, uriBuilder);			
+			employeeController.create(invalidForm, mockUriBuilder);			
 		} catch (ResponseStatusException e) {
 			
 			assertThat(e.getStatus(), equalTo(badRequestException.getStatus()));
 			assertThat(e.getReason(), equalTo(badRequestException.getReason()));
 
-			verify(uriBuilder, never()).path(anyString());
-			verify(uriBuilder, never()).buildAndExpand(anyInt());
-			verify(uriComponents, never()).encode();
-			verify(uriComponents, never()).toUri();
+			verify(mockUriBuilder, never()).path(anyString());
+			verify(mockUriBuilder, never()).buildAndExpand(anyInt());
+			verify(mockUriComponents, never()).encode();
+			verify(mockUriComponents, never()).toUri();
 		}
 	}
 
@@ -124,7 +124,7 @@ public class EmployeeControllerTest {
 		List<Employee> employees = new ArrayList<>();
 		employees.add(CommonUtils.getEmployeeInstance());
 
-		when(employeeService.findAll()).thenReturn(Flux.just(employees));
+		when(mockEmployeeService.findAll()).thenReturn(Flux.just(employees));
 
 		Flux<List<Employee>> employeesResponse = employeeController.findAll();
 
@@ -136,7 +136,7 @@ public class EmployeeControllerTest {
 
 	@Test
 	public void findEmployee_whenEmployeeIdIsValid_shouldReturnEmployee() {
-		when(employeeService.findById(anyInt())).thenReturn(Mono.just(CommonUtils.getEmployeeInstance()));
+		when(mockEmployeeService.findById(anyInt())).thenReturn(Mono.just(CommonUtils.getEmployeeInstance()));
 
 		ResponseEntity<Employee> responseEntity = employeeController.findEmployee(EMPLOYEE_ID);
 
@@ -148,14 +148,14 @@ public class EmployeeControllerTest {
 	@Test
 	public void findEmployee_whenEmployeeNotFound_shouldReturnNotFound() {
 		ResponseStatusException notFoundExcepton = getResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND);
-		when(employeeService.findById(anyInt())).thenThrow(notFoundExcepton);
+		when(mockEmployeeService.findById(anyInt())).thenThrow(notFoundExcepton);
 
 		try {
 			employeeController.findEmployee(EMPLOYEE_ID);			
 		}catch (ResponseStatusException e) {			
 			assertThat(e.getStatus(), equalTo(notFoundExcepton.getStatus()));
 			assertThat(e.getReason(), equalTo(notFoundExcepton.getReason()));
-			verify(employeeService, times(1)).findById(anyInt());
+			verify(mockEmployeeService, times(1)).findById(anyInt());
 		}
 	}
 
@@ -164,7 +164,7 @@ public class EmployeeControllerTest {
 		ResponseEntity<Object> responseEntity = employeeController.removeEmployee(EMPLOYEE_ID);
 
 		assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
-		verify(employeeService, times(1)).removeEmployee(anyInt());
+		verify(mockEmployeeService, times(1)).removeEmployee(anyInt());
 	}
 
 	@Test
@@ -176,17 +176,17 @@ public class EmployeeControllerTest {
 		}catch (ResponseStatusException e) {
 			assertThat(e.getStatus(), equalTo(notFoundExcepton.getStatus()));
 			assertThat(e.getReason(), equalTo(notFoundExcepton.getReason()));
-			verify(employeeService, never()).removeEmployee(anyInt());
+			verify(mockEmployeeService, never()).removeEmployee(anyInt());
 		}
 	}
 
 	@Test
 	public void updateEmployee_withValidEmployee_shouldUpdateSuccessfully() {
 		Employee updatedEmployee = CommonUtils.getUpdatedEmployee();
-		when(employeeService.update(any(Employee.class))).thenReturn(updatedEmployee);
+		when(mockEmployeeService.update(any(Employee.class))).thenReturn(updatedEmployee);
 		mockUriComponentsBuilder();
 
-		ResponseEntity<Employee> response = employeeController.updateEmployee(EMPLOYEE_ID, CommonUtils.getEmployeeFormInstance(), uriBuilder);
+		ResponseEntity<Employee> response = employeeController.updateEmployee(EMPLOYEE_ID, CommonUtils.getEmployeeFormInstance(), mockUriBuilder);
 
 		assertThat(response.getStatusCode(), equalTo(HttpStatus.ACCEPTED));		
 		assertThat(response.getBody().getId(), equalTo(EMPLOYEE_ID));
@@ -195,10 +195,10 @@ public class EmployeeControllerTest {
 	}
 
 	private void mockUriComponentsBuilder() {
-		when(uriBuilder.path(anyString())).thenReturn(uriBuilder);
-		when(uriBuilder.buildAndExpand(anyInt())).thenReturn(uriComponents);
-		when(uriComponents.encode()).thenReturn(uriComponents);
-		when(uriComponents.toUri()).thenReturn(uri);
+		when(mockUriBuilder.path(anyString())).thenReturn(mockUriBuilder);
+		when(mockUriBuilder.buildAndExpand(anyInt())).thenReturn(mockUriComponents);
+		when(mockUriComponents.encode()).thenReturn(mockUriComponents);
+		when(mockUriComponents.toUri()).thenReturn(uri);
 	}
 
 	private ResponseStatusException getResponseStatusException(final HttpStatus status, final String reason) {

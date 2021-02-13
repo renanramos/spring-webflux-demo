@@ -27,13 +27,13 @@ public class EmployeeExceptionHandlerTest {
 	private EmployeeExceptionHandler employeeExceptionHandler;
 
 	@Mock
-	private HttpRequestMethodNotSupportedException ex;
+	private HttpRequestMethodNotSupportedException mockNotSupportedException;
 
 	@Mock
-	private HttpHeaders headers;
+	private HttpHeaders mockHeaders;
 
 	@Mock
-	private WebRequest request;
+	private WebRequest mockRequest;
 
 	@Test
 	public void handleEntityNotFound_withValidParameters_shouldThrowNotFouncException() {
@@ -46,7 +46,7 @@ public class EmployeeExceptionHandlerTest {
 	@Test
 	public void handleHttpRequestMethodNotSupported_withValidParameters_shouldThrowMethodNotAllowedException() {
 		ResponseEntity<Object> response = employeeExceptionHandler
-				.handleHttpRequestMethodNotSupported(ex, headers, HttpStatus.METHOD_NOT_ALLOWED, request);
+				.handleHttpRequestMethodNotSupported(mockNotSupportedException, mockHeaders, HttpStatus.METHOD_NOT_ALLOWED, mockRequest);
 
 		assertThat(response.getStatusCode(), is(HttpStatus.METHOD_NOT_ALLOWED));
 	}

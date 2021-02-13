@@ -39,12 +39,12 @@ public class EmployeeServiceImplTest {
 	private EmployeeServiceImpl employeeServiceImpl;
 
 	@Mock
-	private EmployeeRepository employeeRepository;
+	private EmployeeRepository mockEmployeeRepository;
 	
 	@Test
 	public void create_withEmployee_shouldReturnEmployee() {
 		Employee employee = CommonUtils.getEmployeeInstance();
-		when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
+		when(mockEmployeeRepository.save(any(Employee.class))).thenReturn(employee);
 
 		Employee employeeCreated = employeeServiceImpl.create(CommonUtils.getEmployeeFormInstance());
 
@@ -56,7 +56,7 @@ public class EmployeeServiceImplTest {
 	@Test
 	public void findAll_withEmployeeInitialized_shouldReturnListSuccessfully() {
 
-		when(employeeRepository.findAll()).thenReturn(Flux.just(Arrays.asList(CommonUtils.getEmployeeInstance())));
+		when(mockEmployeeRepository.findAll()).thenReturn(Flux.just(Arrays.asList(CommonUtils.getEmployeeInstance())));
 		
 		Flux<List<Employee>> fluxEmployees = employeeServiceImpl.findAll();
 
@@ -68,7 +68,7 @@ public class EmployeeServiceImplTest {
 
 	@Test
 	public void findById_withValidEmployeeId_shouldReturnEmployeeSuccessfully() {
-		when(employeeRepository.findById(anyInt())).thenReturn(Mono.just(CommonUtils.getEmployeeInstance()));
+		when(mockEmployeeRepository.findById(anyInt())).thenReturn(Mono.just(CommonUtils.getEmployeeInstance()));
 
 		Mono<Employee> employeeFound = employeeServiceImpl.findById(anyInt());
 
@@ -80,7 +80,7 @@ public class EmployeeServiceImplTest {
 	@Test
 	public void removeEmployee_withEmployeeId_shouldRemoveSuccessfully() {
 		employeeServiceImpl.removeEmployee(anyInt());
-		verify(employeeRepository, times(1)).removeEmployee(anyInt());
+		verify(mockEmployeeRepository, times(1)).removeEmployee(anyInt());
 	}
 
 	@Test
@@ -88,7 +88,7 @@ public class EmployeeServiceImplTest {
 		Employee employee = CommonUtils.getEmployeeInstance();
 		employee.setId(EMPLOYEE_ID);
 		
-		when(employeeRepository.update(any(Employee.class))).thenReturn(CommonUtils.getUpdatedEmployee());
+		when(mockEmployeeRepository.update(any(Employee.class))).thenReturn(CommonUtils.getUpdatedEmployee());
 		
 		Employee updatedEmployee = employeeServiceImpl.update(employee);
 
