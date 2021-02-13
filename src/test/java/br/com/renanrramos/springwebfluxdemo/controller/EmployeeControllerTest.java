@@ -80,7 +80,7 @@ public class EmployeeControllerTest {
 	@Test
 	public void create_withEmptyEmployeeName_shouldReturnBadRequest() {
 
-		ResponseStatusException badRequestException = new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM);
+		ResponseStatusException badRequestException = getResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM);
 		EmployeeForm invalidForm = EmployeeForm.builder().name("").department(EMPLOYEE_DEPARTMENT).build();
 
 		when(employeeService.create(any(EmployeeForm.class))).thenThrow(badRequestException);
@@ -102,7 +102,7 @@ public class EmployeeControllerTest {
 	@Test
 	public void create_withEmptyEmployeeDepartment_shouldReturnBadRequest() {
 
-		ResponseStatusException badRequestException = new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM);
+		ResponseStatusException badRequestException = getResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM);
 		EmployeeForm invalidForm = EmployeeForm.builder().name(EMPLOYEE_NAME).department("").build();
 
 		when(employeeService.create(any(EmployeeForm.class))).thenThrow(badRequestException);
@@ -150,7 +150,7 @@ public class EmployeeControllerTest {
 
 	@Test
 	public void findEmployee_whenEmployeeNotFound_shouldReturnNotFound() {
-		ResponseStatusException notFoundExcepton = new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND);
+		ResponseStatusException notFoundExcepton = getResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND);
 		when(employeeService.findById(anyInt())).thenThrow(notFoundExcepton);
 
 		try {
@@ -164,9 +164,6 @@ public class EmployeeControllerTest {
 
 	@Test
 	public void removeEmployee_withValidEmployeeId_shouldRemoveSuccessfully() {
-		
-		when(employeeService.findById(anyInt())).thenReturn(Mono.just(CommonUtils.getEmployeeInstance()));
-
 		ResponseEntity<Object> responseEntity = employeeController.removeEmployee(EMPLOYEE_ID);
 
 		assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
@@ -175,8 +172,7 @@ public class EmployeeControllerTest {
 
 	@Test
 	public void removeEmployee_withInvalidEmployeeId_shouldReturnNotFound() {
-		ResponseStatusException notFoundExcepton = new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND);
-		when(employeeService.findById(anyInt())).thenThrow(notFoundExcepton);
+		ResponseStatusException notFoundExcepton = getResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND);
 
 		try {			
 			employeeController.removeEmployee(EMPLOYEE_ID);
@@ -186,5 +182,8 @@ public class EmployeeControllerTest {
 			verify(employeeService, never()).removeEmployee(anyInt());
 		}
 	}
-	
+
+	private ResponseStatusException getResponseStatusException(final HttpStatus status, final String reason) {
+		return new ResponseStatusException(status, reason);
+	}
 }
