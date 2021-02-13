@@ -4,6 +4,8 @@ import java.util.List;
 import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_ID;
 import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_NAME;
 import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_DEPARTMENT;
+import static br.com.renanrramos.springwebfluxdemo.common.Constants.UPDATED_EMPLOYEE_NAME;
+import static br.com.renanrramos.springwebfluxdemo.common.Constants.UPDATED_EMPLOYEE_DEPARTMENT;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
@@ -92,5 +94,16 @@ public class EmpolyeeRepositoryTest {
 		Flux<List<Employee>> employees = employeeRepository.findAll();
 
 		assertThat(employees.blockFirst().size(), is(9));
+	}
+
+	@Test
+	public void update_withValidEmployee_shouldSaveEmployee() {
+	
+		Employee updatedEmployee = CommonUtils.getUpdatedEmployee();
+		Employee employee = employeeRepository.update(updatedEmployee);
+
+		assertThat(employee.getId(), is(EMPLOYEE_ID));
+		assertThat(employee.getName(), is(UPDATED_EMPLOYEE_NAME));
+		assertThat(employee.getDepartment(), is(UPDATED_EMPLOYEE_DEPARTMENT));
 	}
 }

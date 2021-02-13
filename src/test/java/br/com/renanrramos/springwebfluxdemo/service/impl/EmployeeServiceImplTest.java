@@ -3,6 +3,8 @@ package br.com.renanrramos.springwebfluxdemo.service.impl;
 import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_DEPARTMENT;
 import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_ID;
 import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_NAME;
+import static br.com.renanrramos.springwebfluxdemo.common.Constants.UPDATED_EMPLOYEE_NAME;
+import static br.com.renanrramos.springwebfluxdemo.common.Constants.UPDATED_EMPLOYEE_DEPARTMENT;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -79,5 +81,19 @@ public class EmployeeServiceImplTest {
 	public void removeEmployee_withEmployeeId_shouldRemoveSuccessfully() {
 		employeeServiceImpl.removeEmployee(anyInt());
 		verify(employeeRepository, times(1)).removeEmployee(anyInt());
+	}
+
+	@Test
+	public void updateEmployee_withValidEmployee_shouldUpdateSuccessfully() {
+		Employee employee = CommonUtils.getEmployeeInstance();
+		employee.setId(EMPLOYEE_ID);
+		
+		when(employeeRepository.update(any(Employee.class))).thenReturn(CommonUtils.getUpdatedEmployee());
+		
+		Employee updatedEmployee = employeeServiceImpl.update(employee);
+
+		assertThat(updatedEmployee.getId(), is(EMPLOYEE_ID));
+		assertThat(updatedEmployee.getName(), is(UPDATED_EMPLOYEE_NAME));
+		assertThat(updatedEmployee.getDepartment(), is(UPDATED_EMPLOYEE_DEPARTMENT));
 	}
 }
