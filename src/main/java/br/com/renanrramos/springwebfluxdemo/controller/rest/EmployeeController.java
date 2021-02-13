@@ -50,11 +50,8 @@ public class EmployeeController {
 		
 		empOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM));
 
-		uri = uriBuilder.path("/employees/{id}")
-				.buildAndExpand(empOptional.get().getId())
-				.encode()
-				.toUri();
-		
+		uri = createEmployeeUri(uriBuilder, empOptional.get().getId());
+
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
 				.location(uri).body(empOptional.get());
@@ -85,12 +82,27 @@ public class EmployeeController {
 	@ResponseBody
 	@PutMapping(path = "/{id}")
 	@ApiOperation(value = "Update an employee")
-	public ResponseEntity<Employee> updateEmployee(@PathVariable("id") final int id, @RequestBody final EmployeeForm employeeForm) {
+	public ResponseEntity<Employee> updateEmployee(@PathVariable("id") final int id, @RequestBody final EmployeeForm employeeForm, final UriComponentsBuilder uriBuilder) {
 		Employee employee = Employee.builder()
 				.id(id)
 				.name(employeeForm.getName())
 				.department(employeeForm.getDepartment())
 				.build();
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(employeeService.update(employee));
+		
+		Employee updatedEmployee = employeeService.update(employee);
+		
+		uri = createEmployeeUri(uriBuilder, updatedEmployee.getId());
+		
+		return ResponseEntity
+				.status(HttpStatus.ACCEPTED)
+				.location(uri)
+				.body(updatedEmployee);
+	}
+
+	private URI createEmployeeUri(final UriComponentsBuilder uriBuilder, final Integer employeeId) {
+		return uriBuilder.path("/employees/{id}")
+				.buildAndExpand(employeeId)
+				.encode()
+				.toUri();
 	}
 }
