@@ -59,7 +59,7 @@ public class EmployeeRepository {
 
     @Bean
 	public void createEmployeesList() {
-		for (int i = 0; i <= initialEmployees ; i++) {
+		for (int i = 1; i <= initialEmployees ; i++) {
 			EMPLOYEES.add(employeeGenerator(i));
 		}
 	}
