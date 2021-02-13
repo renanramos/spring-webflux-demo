@@ -103,6 +103,10 @@
 		    <artifactId>junit-platform-launcher</artifactId>
 		    <scope>test</scope>
 		</dependency>
+		<dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
 
 		<!-- Mockito extention -->
 		<dependency>
