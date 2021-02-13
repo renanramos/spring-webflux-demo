@@ -7,16 +7,21 @@ import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_DEP
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.renanrramos.springwebfluxdemo.common.CommonUtils;
+import br.com.renanrramos.springwebfluxdemo.messages.constants.Messages;
 import br.com.renanrramos.springwebfluxdemo.model.Employee;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -65,10 +70,13 @@ public class EmpolyeeRepositoryTest {
 
 	@Test
 	public void findById_withInvalidEmployeeId_shouldReturnEmpty() {
-
-		Mono<Employee> employeeNotFound = employeeRepository.findById(INVALID_EMPLOYEE_ID);
-
-		assertThat(employeeNotFound.blockOptional().isPresent(), is(false));
+		try {
+			employeeRepository.findById(INVALID_EMPLOYEE_ID);
+		}catch (ResponseStatusException ex) {
+			assertThat(ex, notNullValue());
+			assertThat(ex.getStatus(), is(HttpStatus.NOT_FOUND));
+			assertThat(ex.getReason(), is(Messages.EMPLOYEE_NOT_FOUND));
+		}
 	}
 
 	@Test
