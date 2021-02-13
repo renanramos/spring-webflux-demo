@@ -63,10 +63,7 @@ public class EmployeeControllerTest {
 	@Test
 	public void create_withValidEmployee_shouldCreateSuccessfully() {		
 		when(employeeService.create(any(EmployeeForm.class))).thenReturn(CommonUtils.getEmployeeInstance());
-		when(uriBuilder.path(anyString())).thenReturn(uriBuilder);
-		when(uriBuilder.buildAndExpand(anyInt())).thenReturn(uriComponents);
-		when(uriComponents.encode()).thenReturn(uriComponents);
-		when(uriComponents.toUri()).thenReturn(uri);
+		mockUriComponentsBuilder();
 
 		ResponseEntity<Employee> responseEntity = employeeController.create(CommonUtils.getEmployeeFormInstance(), uriBuilder);
 
@@ -181,6 +178,27 @@ public class EmployeeControllerTest {
 			assertThat(e.getReason(), equalTo(notFoundExcepton.getReason()));
 			verify(employeeService, never()).removeEmployee(anyInt());
 		}
+	}
+
+	@Test
+	public void updateEmployee_withValidEmployee_shouldUpdateSuccessfully() {
+		Employee updatedEmployee = CommonUtils.getUpdatedEmployee();
+		when(employeeService.update(any(Employee.class))).thenReturn(updatedEmployee);
+		mockUriComponentsBuilder();
+
+		ResponseEntity<Employee> response = employeeController.updateEmployee(EMPLOYEE_ID, CommonUtils.getEmployeeFormInstance(), uriBuilder);
+
+		assertThat(response.getStatusCode(), equalTo(HttpStatus.ACCEPTED));		
+		assertThat(response.getBody().getId(), equalTo(EMPLOYEE_ID));
+		assertThat(response.getBody().getName(), equalTo(updatedEmployee.getName()));
+		assertThat(response.getBody().getDepartment(), equalTo(updatedEmployee.getDepartment()));
+	}
+
+	private void mockUriComponentsBuilder() {
+		when(uriBuilder.path(anyString())).thenReturn(uriBuilder);
+		when(uriBuilder.buildAndExpand(anyInt())).thenReturn(uriComponents);
+		when(uriComponents.encode()).thenReturn(uriComponents);
+		when(uriComponents.toUri()).thenReturn(uri);
 	}
 
 	private ResponseStatusException getResponseStatusException(final HttpStatus status, final String reason) {
