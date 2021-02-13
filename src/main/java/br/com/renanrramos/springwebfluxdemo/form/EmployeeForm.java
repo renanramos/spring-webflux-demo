@@ -21,7 +21,7 @@ public class EmployeeForm {
 		
 	}
 
-	public EmployeeForm(@NotBlank String name, @NotBlank String department) {
+	public EmployeeForm(@NotBlank final String name, @NotBlank final String department) {
 		this.name = name;
 		this.department = department;
 	}

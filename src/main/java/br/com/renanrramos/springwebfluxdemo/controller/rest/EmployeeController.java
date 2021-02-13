@@ -45,7 +45,7 @@ public class EmployeeController {
 	@ResponseBody
 	@PostMapping
 	@ApiOperation(value = "Add new employee")
-	public ResponseEntity<Employee> create(@Valid @RequestBody EmployeeForm employee, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<Employee> create(@Valid @RequestBody final EmployeeForm employee, final UriComponentsBuilder uriBuilder) {
 		Optional<Employee> empOptional = Optional.ofNullable(employeeService.create(employee));
 		
 		empOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM));
@@ -70,14 +70,14 @@ public class EmployeeController {
 	@ResponseBody
 	@GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Get employee by id")
-	public ResponseEntity<Employee> findEmployee(@PathVariable("id") Integer id) {
-		return ResponseEntity.ok(employeeService.findById(id).block());
+	public ResponseEntity<Employee> findEmployee(@PathVariable("id") final Integer id) {
+		return ResponseEntity.status(HttpStatus.OK).body(employeeService.findById(id).block());
 	}
 
 	@ResponseBody
 	@DeleteMapping(path = "/{id}")
 	@ApiOperation(value = "Delete an employee")
-	public ResponseEntity<Object> removeEmployee(@PathVariable("id") int id) {
+	public ResponseEntity<Object> removeEmployee(@PathVariable("id") final int id) {
 		employeeService.removeEmployee(id);
 		return ResponseEntity.ok().build();
 	}
@@ -85,7 +85,7 @@ public class EmployeeController {
 	@ResponseBody
 	@PutMapping(path = "/{id}")
 	@ApiOperation(value = "Update an employee")
-	public ResponseEntity<Employee> updateEmployee(@PathVariable("id") int id, @RequestBody EmployeeForm employeeForm) {
+	public ResponseEntity<Employee> updateEmployee(@PathVariable("id") final int id, @RequestBody final EmployeeForm employeeForm) {
 		Employee employee = Employee.builder()
 				.id(id)
 				.name(employeeForm.getName())

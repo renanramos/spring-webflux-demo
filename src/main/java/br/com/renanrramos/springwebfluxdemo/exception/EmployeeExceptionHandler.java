@@ -26,12 +26,12 @@ public class EmployeeExceptionHandler {
 
 	@ExceptionHandler({HttpRequestMethodNotSupportedException.class})
 	@ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-	protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
-			HttpHeaders headers, HttpStatus status, WebRequest request) {
+	protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(final HttpRequestMethodNotSupportedException ex,
+			final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 		return handleResponseEntity(status.value(), ex.getMessage());
 	}
 
-	private ResponseEntity<Object> handleResponseEntity(int status, String message) {
+	private ResponseEntity<Object> handleResponseEntity(final int status, final String message) {
 		return ResponseEntity
 				.status(status)
 				.contentType(MediaType.APPLICATION_JSON)

@@ -27,28 +27,28 @@ public class EmployeeRepository {
 	public EmployeeRepository() {
 	}
 
-	public Employee save(Employee e) {
-		return addEmpolyee(e);
+	public Employee save(final Employee employee) {
+		return addEmpolyee(employee);
 	}
 
-	public Mono<Employee> findById(Integer id) {
-		return getEmployeeById(id);		
+	public Mono<Employee> findById(final Integer employeeId) {
+		return getEmployeeById(employeeId);
 	}
 
 	public Flux<List<Employee>> findAll() {
 		return Flux.just(EMPLOYEES);
 	}
 
-	public void removeEmployee(int id) {
-		getEmployeeById(id)
+	public void removeEmployee(final Integer employeeId) {
+		getEmployeeById(employeeId)
 			.blockOptional()
-			.ifPresent(emp -> EMPLOYEES.remove(id));
+			.ifPresent(emp -> EMPLOYEES.remove(employeeId.intValue()));
 	}
 
-	public Employee update(Employee e) {
+	public Employee update(final Employee employee) {
 		
-		Employee employeeToBeUpdated = getEmployeeById(e.getId()).blockOptional().get();
-		BeanUtils.copyProperties(e, employeeToBeUpdated);
+		Employee employeeToBeUpdated = getEmployeeById(employee.getId()).blockOptional().get();
+		BeanUtils.copyProperties(employee, employeeToBeUpdated);
 
 		int index = EMPLOYEES.indexOf(employeeToBeUpdated);
 		
@@ -64,8 +64,8 @@ public class EmployeeRepository {
 		}
 	}
 
-	private Mono<Employee> getEmployeeById(int id) {
-		Optional<Employee> employeeOptional = EMPLOYEES.stream().filter(emp -> emp.getId() == id).findFirst();
+	private Mono<Employee> getEmployeeById(final Integer employeeId) {
+		Optional<Employee> employeeOptional = EMPLOYEES.stream().filter(emp -> emp.getId() == employeeId).findFirst();
 
 		if (!employeeOptional.isPresent()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND);
@@ -74,16 +74,16 @@ public class EmployeeRepository {
 		return Mono.just(employeeOptional.get());
 	}
 
-	private Employee addEmpolyee(Employee employee) {
+	private Employee addEmpolyee(final Employee employee) {
 		employee.setId(EMPLOYEES.size());
 		EMPLOYEES.add(employee);
 		return employee;
 	}
 
-	private static Employee employeeGenerator(int id) {
+	private static Employee employeeGenerator(final Integer employeeId) {
 		return Employee.builder()
-				.department("Department " + id)
-				.id(id).name("Empl " + id)
+				.department("Department " + employeeId)
+				.id(employeeId).name("Empl " + employeeId)
 				.build();
 	}
 }
