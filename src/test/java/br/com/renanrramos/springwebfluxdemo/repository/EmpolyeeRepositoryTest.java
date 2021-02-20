@@ -46,7 +46,7 @@ public class EmpolyeeRepositoryTest {
 	@Test
 	public void createEmployeesList_withValidInitialValue_shouldCreateAListOfEmployees() {
 		Flux<List<Employee>> employees = employeeRepository.findAll();
-		assertThat(employees.blockFirst().size(), is(10));
+		assertThat(employees.blockFirst().size(), is(9));
 	}
 
 	@Test
@@ -55,8 +55,8 @@ public class EmpolyeeRepositoryTest {
 		Employee employee = employeeRepository.save(CommonUtils.getEmployeeInstance());
 		Flux<List<Employee>> employeesList = employeeRepository.findAll();
 
-		assertThat(employeesList.blockFirst().size(), is(11));
-		assertThat(employee.getId(), is(10));
+		assertThat(employeesList.blockFirst().size(), is(10));
+		assertThat(employee.getId(), is(9));
 		assertThat(employee.getName(), is(EMPLOYEE_NAME));
 		assertThat(employee.getDepartment(), is(EMPLOYEE_DEPARTMENT));
 	}
@@ -85,7 +85,7 @@ public class EmpolyeeRepositoryTest {
 	public void findAll_withInitializedEmployeesList_shouldReturnList() {
 		Flux<List<Employee>> employeesList = employeeRepository.findAll();
 
-		assertThat(employeesList.blockFirst().size(), is(10));
+		assertThat(employeesList.blockFirst().size(), is(9));
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class EmpolyeeRepositoryTest {
 		employeeRepository.removeEmployee(EMPLOYEE_ID);
 		Flux<List<Employee>> employees = employeeRepository.findAll();
 
-		assertThat(employees.blockFirst().size(), is(9));
+		assertThat(employees.blockFirst().size(), is(8));
 	}
 
 	@Test
