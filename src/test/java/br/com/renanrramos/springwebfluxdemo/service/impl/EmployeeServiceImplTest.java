@@ -3,8 +3,6 @@ package br.com.renanrramos.springwebfluxdemo.service.impl;
 import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_DEPARTMENT;
 import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_ID;
 import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_NAME;
-import static br.com.renanrramos.springwebfluxdemo.common.Constants.UPDATED_EMPLOYEE_NAME;
-import static br.com.renanrramos.springwebfluxdemo.common.Constants.UPDATED_EMPLOYEE_DEPARTMENT;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,6 +14,8 @@ import static org.mockito.Mockito.times;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,41 +46,37 @@ public class EmployeeServiceImplTest {
 		Employee employee = CommonUtils.getEmployeeInstance();
 		when(mockEmployeeRepository.save(any(Employee.class))).thenReturn(employee);
 
-		Employee employeeCreated = employeeServiceImpl.create(CommonUtils.getEmployeeFormInstance());
+		Employee employeeCreated = employeeServiceImpl.create(employee);
 
-		assertThat(employeeCreated.getId(), is(EMPLOYEE_ID));
-		assertThat(employeeCreated.getName(), is(EMPLOYEE_NAME));
-		assertThat(employeeCreated.getDepartment(), is(EMPLOYEE_DEPARTMENT));
+		checkEmployee(employeeCreated);
 	}
 
 	@Test
 	public void findAll_withEmployeeInitialized_shouldReturnListSuccessfully() {
 
-		when(mockEmployeeRepository.findAll()).thenReturn(Flux.just(Arrays.asList(CommonUtils.getEmployeeInstance())));
+		when(mockEmployeeRepository.findAll()).thenReturn(Arrays.asList(CommonUtils.getEmployeeInstance()));
 		
-		Flux<List<Employee>> fluxEmployees = employeeServiceImpl.findAll();
+		Flux<Employee> fluxEmployees = employeeServiceImpl.findAll();
+		List<Employee> employees = fluxEmployees.toStream().collect(Collectors.toList());
 
-		assertThat(fluxEmployees.blockFirst().size(), is(1));
-		assertThat(fluxEmployees.blockFirst().get(0).getId(), is(EMPLOYEE_ID));
-		assertThat(fluxEmployees.blockFirst().get(0).getName(), is(EMPLOYEE_NAME));
-		assertThat(fluxEmployees.blockFirst().get(0).getDepartment(), is(EMPLOYEE_DEPARTMENT));
+		assertThat(employees.size(), is(1));
+		checkEmployee(fluxEmployees.blockFirst());
 	}
 
 	@Test
 	public void findById_withValidEmployeeId_shouldReturnEmployeeSuccessfully() {
-		when(mockEmployeeRepository.findById(anyInt())).thenReturn(Mono.just(CommonUtils.getEmployeeInstance()));
+		when(mockEmployeeRepository.findById(anyInt())).thenReturn(Optional.of(CommonUtils.getEmployeeInstance()));
 
 		Mono<Employee> employeeFound = employeeServiceImpl.findById(anyInt());
 
-		assertThat(employeeFound.block().getId(), is(EMPLOYEE_ID));
-		assertThat(employeeFound.block().getName(), is(EMPLOYEE_NAME));
-		assertThat(employeeFound.block().getDepartment(), is(EMPLOYEE_DEPARTMENT));
+		checkEmployee(employeeFound.block());
 	}
 
 	@Test
 	public void removeEmployee_withEmployeeId_shouldRemoveSuccessfully() {
+		when(mockEmployeeRepository.findById(anyInt())).thenReturn(Optional.of(CommonUtils.getEmployeeInstance()));
 		employeeServiceImpl.removeEmployee(anyInt());
-		verify(mockEmployeeRepository, times(1)).removeEmployee(anyInt());
+		verify(mockEmployeeRepository, times(1)).deleteById(anyInt());
 	}
 
 	@Test
@@ -88,12 +84,16 @@ public class EmployeeServiceImplTest {
 		Employee employee = CommonUtils.getEmployeeInstance();
 		employee.setId(EMPLOYEE_ID);
 		
-		when(mockEmployeeRepository.update(any(Employee.class))).thenReturn(CommonUtils.getUpdatedEmployee());
+		when(mockEmployeeRepository.save(any(Employee.class))).thenReturn(CommonUtils.getEmployeeInstance());
 		
 		Employee updatedEmployee = employeeServiceImpl.update(employee);
 
+		checkEmployee(updatedEmployee);
+	}
+
+	private void checkEmployee(Employee updatedEmployee) {
 		assertThat(updatedEmployee.getId(), is(EMPLOYEE_ID));
-		assertThat(updatedEmployee.getName(), is(UPDATED_EMPLOYEE_NAME));
-		assertThat(updatedEmployee.getDepartment(), is(UPDATED_EMPLOYEE_DEPARTMENT));
+		assertThat(updatedEmployee.getName(), is(EMPLOYEE_NAME));
+		assertThat(updatedEmployee.getDepartment(), is(EMPLOYEE_DEPARTMENT));
 	}
 }

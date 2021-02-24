@@ -1,7 +1,6 @@
 package br.com.renanrramos.springwebfluxdemo.controller.rest;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -30,6 +29,7 @@ import br.com.renanrramos.springwebfluxdemo.service.EmployeeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(path = "api/employees", produces = "application/json")
@@ -45,7 +45,13 @@ public class EmployeeController {
 	@ResponseBody
 	@PostMapping
 	@ApiOperation(value = "Add new employee")
-	public ResponseEntity<Employee> create(@Valid @RequestBody final EmployeeForm employee, final UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<Mono<Employee>> create(@Valid @RequestBody final EmployeeForm employeeForm, final UriComponentsBuilder uriBuilder) {
+		
+		Employee employee = Employee.builder()
+				.department(employeeForm.getDepartment())
+				.name(employeeForm.getName())
+				.build();
+		
 		Optional<Employee> empOptional = Optional.ofNullable(employeeService.create(employee));
 		
 		empOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM));
@@ -53,38 +59,43 @@ public class EmployeeController {
 		uri = createEmployeeUri(uriBuilder, empOptional.get().getId());
 
 		return ResponseEntity
-			.status(HttpStatus.CREATED)
-				.location(uri).body(empOptional.get());
+				.status(HttpStatus.CREATED)
+				.location(uri)
+				.body(Mono.just(empOptional.get()));
 	}
 
 	@ResponseBody
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Get all employees")
-	public Flux<List<Employee>> findAll() {
+	public Flux<Employee> findAll() {
 		return employeeService.findAll();
 	}
 
 	@ResponseBody
 	@GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Get employee by id")
-	public ResponseEntity<Employee> findEmployee(@PathVariable("id") final Integer id) {
-		return ResponseEntity.status(HttpStatus.OK).body(employeeService.findById(id).block());
+	public ResponseEntity<Mono<Employee>> findEmployee(@PathVariable("id") final Integer employeeId) {
+		return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(employeeService
+							.findById(employeeId)
+							.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND))));
 	}
 
 	@ResponseBody
 	@DeleteMapping(path = "/{id}")
 	@ApiOperation(value = "Delete an employee")
-	public ResponseEntity<Object> removeEmployee(@PathVariable("id") final int id) {
-		employeeService.removeEmployee(id);
+	public ResponseEntity<Object> removeEmployee(@PathVariable("id") final Integer employeeId) {
+		employeeService.removeEmployee(employeeId);
 		return ResponseEntity.ok().build();
 	}
 
 	@ResponseBody
 	@PutMapping(path = "/{id}")
 	@ApiOperation(value = "Update an employee")
-	public ResponseEntity<Employee> updateEmployee(@PathVariable("id") final int id, @RequestBody final EmployeeForm employeeForm, final UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<Mono<Employee>> updateEmployee(@PathVariable("id") final Integer employeeId, @RequestBody final EmployeeForm employeeForm, final UriComponentsBuilder uriBuilder) {
 		Employee employee = Employee.builder()
-				.id(id)
+				.id(employeeId)
 				.name(employeeForm.getName())
 				.department(employeeForm.getDepartment())
 				.build();
@@ -96,7 +107,7 @@ public class EmployeeController {
 		return ResponseEntity
 				.status(HttpStatus.ACCEPTED)
 				.location(uri)
-				.body(updatedEmployee);
+				.body(Mono.just(updatedEmployee));
 	}
 
 	private URI createEmployeeUri(final UriComponentsBuilder uriBuilder, final Integer employeeId) {

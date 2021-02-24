@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,16 +63,16 @@ public class EmployeeControllerTest {
 
 	@Test
 	public void create_withValidEmployee_shouldCreateSuccessfully() {		
-		when(mockEmployeeService.create(any(EmployeeForm.class))).thenReturn(CommonUtils.getEmployeeInstance());
+		when(mockEmployeeService.create(any(Employee.class))).thenReturn(CommonUtils.getEmployeeInstance());
 		mockUriComponentsBuilder();
 
-		ResponseEntity<Employee> responseEntity = employeeController.create(CommonUtils.getEmployeeFormInstance(), mockUriBuilder);
+		ResponseEntity<Mono<Employee>> responseEntity = employeeController.create(CommonUtils.getEmployeeFormInstance(), mockUriBuilder);
 
 		assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.CREATED));
-		assertThat(responseEntity.getBody().getId(), is(EMPLOYEE_ID));
-		assertThat(responseEntity.getBody().getName(), is(EMPLOYEE_NAME));
-		assertThat(responseEntity.getBody().getDepartment(), is(EMPLOYEE_DEPARTMENT));
-		verify(mockEmployeeService, times(1)).create(any(EmployeeForm.class));
+		assertThat(responseEntity.getBody().block().getId(), is(EMPLOYEE_ID));
+		assertThat(responseEntity.getBody().block().getName(), is(EMPLOYEE_NAME));
+		assertThat(responseEntity.getBody().block().getDepartment(), is(EMPLOYEE_DEPARTMENT));
+		verify(mockEmployeeService, times(1)).create(any(Employee.class));
 	}
 
 	@Test
@@ -80,7 +81,7 @@ public class EmployeeControllerTest {
 		ResponseStatusException badRequestException = getResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM);
 		EmployeeForm invalidForm = EmployeeForm.builder().name("").department(EMPLOYEE_DEPARTMENT).build();
 
-		when(mockEmployeeService.create(any(EmployeeForm.class))).thenThrow(badRequestException);
+		when(mockEmployeeService.create(any(Employee.class))).thenThrow(badRequestException);
 
 		try {
 			employeeController.create(invalidForm, mockUriBuilder);			
@@ -102,7 +103,7 @@ public class EmployeeControllerTest {
 		ResponseStatusException badRequestException = getResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM);
 		EmployeeForm invalidForm = EmployeeForm.builder().name(EMPLOYEE_NAME).department("").build();
 
-		when(mockEmployeeService.create(any(EmployeeForm.class))).thenThrow(badRequestException);
+		when(mockEmployeeService.create(any(Employee.class))).thenThrow(badRequestException);
 
 		try {
 			employeeController.create(invalidForm, mockUriBuilder);			
@@ -124,25 +125,26 @@ public class EmployeeControllerTest {
 		List<Employee> employees = new ArrayList<>();
 		employees.add(CommonUtils.getEmployeeInstance());
 
-		when(mockEmployeeService.findAll()).thenReturn(Flux.just(employees));
+		when(mockEmployeeService.findAll()).thenReturn(Flux.fromIterable(employees));
 
-		Flux<List<Employee>> employeesResponse = employeeController.findAll();
+		Flux<Employee> employeesResponse = employeeController.findAll();
+		List<Employee> employeesList = employeesResponse.toStream().collect(Collectors.toList());
 
-		assertThat(employeesResponse.blockLast().size(), is(1));
-		assertThat(employeesResponse.blockLast().get(0).getId(), is(EMPLOYEE_ID));
-		assertThat(employeesResponse.blockLast().get(0).getName(), is(EMPLOYEE_NAME));
-		assertThat(employeesResponse.blockLast().get(0).getDepartment(), is(EMPLOYEE_DEPARTMENT));
+		assertThat(employeesList.size(), is(1));
+		assertThat(employeesResponse.blockFirst().getId(), is(EMPLOYEE_ID));
+		assertThat(employeesResponse.blockFirst().getName(), is(EMPLOYEE_NAME));
+		assertThat(employeesResponse.blockFirst().getDepartment(), is(EMPLOYEE_DEPARTMENT));
 	}
 
 	@Test
 	public void findEmployee_whenEmployeeIdIsValid_shouldReturnEmployee() {
 		when(mockEmployeeService.findById(anyInt())).thenReturn(Mono.just(CommonUtils.getEmployeeInstance()));
 
-		ResponseEntity<Employee> responseEntity = employeeController.findEmployee(EMPLOYEE_ID);
+		ResponseEntity<Mono<Employee>> responseEntity = employeeController.findEmployee(EMPLOYEE_ID);
 
-		assertThat(responseEntity.getBody().getId(), is(EMPLOYEE_ID));
-		assertThat(responseEntity.getBody().getName(), is(EMPLOYEE_NAME));
-		assertThat(responseEntity.getBody().getDepartment(), is(EMPLOYEE_DEPARTMENT));
+		assertThat(responseEntity.getBody().block().getId(), is(EMPLOYEE_ID));
+		assertThat(responseEntity.getBody().block().getName(), is(EMPLOYEE_NAME));
+		assertThat(responseEntity.getBody().block().getDepartment(), is(EMPLOYEE_DEPARTMENT));
 	}
 
 	@Test
@@ -182,16 +184,16 @@ public class EmployeeControllerTest {
 
 	@Test
 	public void updateEmployee_withValidEmployee_shouldUpdateSuccessfully() {
-		Employee updatedEmployee = CommonUtils.getUpdatedEmployee();
+		Employee updatedEmployee = CommonUtils.getEmployeeInstance();
 		when(mockEmployeeService.update(any(Employee.class))).thenReturn(updatedEmployee);
 		mockUriComponentsBuilder();
 
-		ResponseEntity<Employee> response = employeeController.updateEmployee(EMPLOYEE_ID, CommonUtils.getEmployeeFormInstance(), mockUriBuilder);
+		ResponseEntity<Mono<Employee>> response = employeeController.updateEmployee(EMPLOYEE_ID, CommonUtils.getEmployeeFormInstance(), mockUriBuilder);
 
 		assertThat(response.getStatusCode(), equalTo(HttpStatus.ACCEPTED));		
-		assertThat(response.getBody().getId(), equalTo(EMPLOYEE_ID));
-		assertThat(response.getBody().getName(), equalTo(updatedEmployee.getName()));
-		assertThat(response.getBody().getDepartment(), equalTo(updatedEmployee.getDepartment()));
+		assertThat(response.getBody().block().getId(), equalTo(EMPLOYEE_ID));
+		assertThat(response.getBody().block().getName(), equalTo(updatedEmployee.getName()));
+		assertThat(response.getBody().block().getDepartment(), equalTo(updatedEmployee.getDepartment()));
 	}
 
 	private void mockUriComponentsBuilder() {
