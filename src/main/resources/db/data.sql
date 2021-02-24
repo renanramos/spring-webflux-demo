@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS employee;
+
+CREATE TABLE employees (
+  id INT AUTO_INCREMENT  PRIMARY KEY,
+  name VARCHAR(250) NOT NULL,
+  department VARCHAR(250) NOT NULL
+);
