@@ -21,13 +21,4 @@ public class CommonUtils {
 				.department(Constants.EMPLOYEE_DEPARTMENT)
 				.build();
 	}
-
-
-	public static Employee getUpdatedEmployee() {
-		return Employee.builder()
-				.id(EMPLOYEE_ID)
-				.name(Constants.UPDATED_EMPLOYEE_NAME)
-				.department(Constants.UPDATED_EMPLOYEE_DEPARTMENT)
-				.build();
-	}
 }
