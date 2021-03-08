@@ -1,7 +1,5 @@
 package br.com.renanrramos.springwebfluxdemo.common;
 
-import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_ID;
-
 import br.com.renanrramos.springwebfluxdemo.form.EmployeeForm;
 import br.com.renanrramos.springwebfluxdemo.model.Employee;
 
