@@ -85,6 +85,27 @@ public class EmployeeTest {
 
 	@Test
 	public void setDepartment_withValidDepartment_shouldSetEmployeeDepartment() {
+		Employee employee = Employee.builder().department(EMPLOYEE_DEPARTMENT).build();
+	
+		assertThat(employee.getDepartment(), is(EMPLOYEE_DEPARTMENT));
+	}
+
+	@Test
+	public void withId_withValidId_shouldSetEmployeeId() {
+		Employee employee = Employee.builder().id(EMPLOYEE_ID).build();
+	
+		assertThat(employee.getId(), is(EMPLOYEE_ID));
+	}
+
+	@Test
+	public void withName_withValidName_shouldSetEmployeeName() {
+		Employee employee = Employee.builder().name(EMPLOYEE_NAME).build();
+	
+		assertThat(employee.getName(), is(EMPLOYEE_NAME));
+	}
+
+	@Test
+	public void withDepartment_withValidDepartment_shouldSetEmployeeDepartment() {
 		Employee employee = new Employee();
 		employee.setDepartment(EMPLOYEE_DEPARTMENT);
 	
