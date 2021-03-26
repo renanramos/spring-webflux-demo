@@ -1,13 +1,13 @@
 package br.com.renanrramos.springwebfluxdemo.model;
 
+import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_DEPARTMENT;
 import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_ID;
 import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_NAME;
-import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_DEPARTMENT;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
@@ -116,6 +116,6 @@ public class EmployeeTest {
 	public void toString_withValidEmployee_shouldReturnStringWithEmployeeProperties() {
 		Employee employee = new Employee(EMPLOYEE_ID, EMPLOYEE_NAME, EMPLOYEE_DEPARTMENT);
 
-		assertThat(employee.toString(), equalTo("Employee(id=1, name=employee, department=department)"));
+		assertThat(employee.toString(), equalTo("Employee(id=8dabb3eb-8031-42d2-a135-2d940e437a12, name=employee, department=department)"));
 	}
 }

@@ -1,5 +1,7 @@
 package br.com.renanrramos.springwebfluxdemo.service.impl;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,12 +31,12 @@ public class EmployeeServiceImpl implements EmployeeService{
 	}
 
 	@Override
-	public Mono<Employee> findById(final Integer employeeId) {
+	public Mono<Employee> findById(final UUID employeeId) {
 		return Mono.justOrEmpty(employeeRepository.findById(employeeId));
 	}
 
 	@Override
-	public void removeEmployee(final Integer employeeId) {
+	public void removeEmployee(final UUID employeeId) {
 		findById(employeeId)
 			.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND)))
 			.blockOptional()

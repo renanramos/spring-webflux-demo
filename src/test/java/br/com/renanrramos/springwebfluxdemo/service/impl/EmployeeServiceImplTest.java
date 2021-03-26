@@ -7,7 +7,7 @@ import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_NAM
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
@@ -15,6 +15,7 @@ import static org.mockito.Mockito.times;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -65,18 +66,18 @@ public class EmployeeServiceImplTest {
 
 	@Test
 	public void findById_withValidEmployeeId_shouldReturnEmployeeSuccessfully() {
-		when(mockEmployeeRepository.findById(anyInt())).thenReturn(Optional.of(CommonUtils.getEmployeeInstance()));
+		when(mockEmployeeRepository.findById(EMPLOYEE_ID)).thenReturn(Optional.of(CommonUtils.getEmployeeInstance()));
 
-		Mono<Employee> employeeFound = employeeServiceImpl.findById(anyInt());
+		Mono<Employee> employeeFound = employeeServiceImpl.findById(EMPLOYEE_ID);
 
 		checkEmployee(employeeFound.block());
 	}
 
 	@Test
 	public void removeEmployee_withEmployeeId_shouldRemoveSuccessfully() {
-		when(mockEmployeeRepository.findById(anyInt())).thenReturn(Optional.of(CommonUtils.getEmployeeInstance()));
-		employeeServiceImpl.removeEmployee(anyInt());
-		verify(mockEmployeeRepository, times(1)).deleteById(anyInt());
+		when(mockEmployeeRepository.findById(EMPLOYEE_ID)).thenReturn(Optional.of(CommonUtils.getEmployeeInstance()));
+		employeeServiceImpl.removeEmployee(EMPLOYEE_ID);
+		verify(mockEmployeeRepository, times(1)).deleteById(EMPLOYEE_ID);
 	}
 
 	@Test

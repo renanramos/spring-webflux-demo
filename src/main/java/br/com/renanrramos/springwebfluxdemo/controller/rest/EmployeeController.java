@@ -2,6 +2,7 @@ package br.com.renanrramos.springwebfluxdemo.controller.rest;
 
 import java.net.URI;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -74,7 +75,7 @@ public class EmployeeController {
 	@ResponseBody
 	@GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Get employee by id")
-	public ResponseEntity<Mono<Employee>> findEmployee(@PathVariable("id") final Integer employeeId) {
+	public ResponseEntity<Mono<Employee>> findEmployee(@PathVariable("id") final UUID employeeId) {
 		return ResponseEntity
 					.status(HttpStatus.OK)
 					.body(employeeService
@@ -85,7 +86,7 @@ public class EmployeeController {
 	@ResponseBody
 	@DeleteMapping(path = "/{id}")
 	@ApiOperation(value = "Delete an employee")
-	public ResponseEntity<Object> removeEmployee(@PathVariable("id") final Integer employeeId) {
+	public ResponseEntity<Object> removeEmployee(@PathVariable("id") final UUID employeeId) {
 		employeeService.removeEmployee(employeeId);
 		return ResponseEntity.ok().build();
 	}
@@ -93,7 +94,7 @@ public class EmployeeController {
 	@ResponseBody
 	@PutMapping(path = "/{id}")
 	@ApiOperation(value = "Update an employee")
-	public ResponseEntity<Mono<Employee>> updateEmployee(@PathVariable("id") final Integer employeeId, @RequestBody final EmployeeForm employeeForm, final UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<Mono<Employee>> updateEmployee(@PathVariable("id") final UUID employeeId, @RequestBody final EmployeeForm employeeForm, final UriComponentsBuilder uriBuilder) {
 		Employee employee = Employee.builder()
 				.id(employeeId)
 				.name(employeeForm.getName())
@@ -110,7 +111,7 @@ public class EmployeeController {
 				.body(Mono.just(updatedEmployee));
 	}
 
-	private URI createEmployeeUri(final UriComponentsBuilder uriBuilder, final Integer employeeId) {
+	private URI createEmployeeUri(final UriComponentsBuilder uriBuilder, final UUID employeeId) {
 		return uriBuilder.path("/employees/{id}")
 				.buildAndExpand(employeeId)
 				.encode()

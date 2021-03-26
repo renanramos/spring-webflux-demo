@@ -1,5 +1,8 @@
 package br.com.renanrramos.springwebfluxdemo.model;
 
+import java.util.UUID;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,8 +21,9 @@ import lombok.ToString;
 public class Employee {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", updatable = false, unique = true, nullable = false)
+	private UUID id;
 
 	private String name;
 
@@ -29,7 +33,7 @@ public class Employee {
 
 	}
 
-	public Employee(final Integer id, final String name, final String department) {
+	public Employee(final UUID id, final String name, final String department) {
 		this.id = id;
 		this.name = name;
 		this.department = department;

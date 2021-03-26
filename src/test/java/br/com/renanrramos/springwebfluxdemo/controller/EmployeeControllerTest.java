@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -138,7 +139,7 @@ public class EmployeeControllerTest {
 
 	@Test
 	public void findEmployee_whenEmployeeIdIsValid_shouldReturnEmployee() {
-		when(mockEmployeeService.findById(anyInt())).thenReturn(Mono.just(CommonUtils.getEmployeeInstance()));
+		when(mockEmployeeService.findById(EMPLOYEE_ID)).thenReturn(Mono.just(CommonUtils.getEmployeeInstance()));
 
 		ResponseEntity<Mono<Employee>> responseEntity = employeeController.findEmployee(EMPLOYEE_ID);
 
@@ -150,14 +151,14 @@ public class EmployeeControllerTest {
 	@Test
 	public void findEmployee_whenEmployeeNotFound_shouldReturnNotFound() {
 		ResponseStatusException notFoundExcepton = getResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND);
-		when(mockEmployeeService.findById(anyInt())).thenThrow(notFoundExcepton);
+		when(mockEmployeeService.findById(EMPLOYEE_ID)).thenThrow(notFoundExcepton);
 
 		try {
 			employeeController.findEmployee(EMPLOYEE_ID);			
 		}catch (ResponseStatusException e) {			
 			assertThat(e.getStatus(), equalTo(notFoundExcepton.getStatus()));
 			assertThat(e.getReason(), equalTo(notFoundExcepton.getReason()));
-			verify(mockEmployeeService, times(1)).findById(anyInt());
+			verify(mockEmployeeService, times(1)).findById(EMPLOYEE_ID);
 		}
 	}
 
@@ -166,7 +167,7 @@ public class EmployeeControllerTest {
 		ResponseEntity<Object> responseEntity = employeeController.removeEmployee(EMPLOYEE_ID);
 
 		assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
-		verify(mockEmployeeService, times(1)).removeEmployee(anyInt());
+		verify(mockEmployeeService, times(1)).removeEmployee(EMPLOYEE_ID);
 	}
 
 	@Test
@@ -178,7 +179,7 @@ public class EmployeeControllerTest {
 		}catch (ResponseStatusException e) {
 			assertThat(e.getStatus(), equalTo(notFoundExcepton.getStatus()));
 			assertThat(e.getReason(), equalTo(notFoundExcepton.getReason()));
-			verify(mockEmployeeService, never()).removeEmployee(anyInt());
+			verify(mockEmployeeService, never()).removeEmployee(EMPLOYEE_ID);
 		}
 	}
 
@@ -198,7 +199,7 @@ public class EmployeeControllerTest {
 
 	private void mockUriComponentsBuilder() {
 		when(mockUriBuilder.path(anyString())).thenReturn(mockUriBuilder);
-		when(mockUriBuilder.buildAndExpand(anyInt())).thenReturn(mockUriComponents);
+		when(mockUriBuilder.buildAndExpand(EMPLOYEE_ID)).thenReturn(mockUriComponents);
 		when(mockUriComponents.encode()).thenReturn(mockUriComponents);
 		when(mockUriComponents.toUri()).thenReturn(uri);
 	}
