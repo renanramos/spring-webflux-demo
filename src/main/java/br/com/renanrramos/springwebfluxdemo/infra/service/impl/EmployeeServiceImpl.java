@@ -17,7 +17,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-public class EmployeeServiceImpl implements EmployeeService{
+public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
@@ -38,11 +38,11 @@ public class EmployeeServiceImpl implements EmployeeService{
 	}
 
 	@Override
-	public void removeEmployee(final UUID employeeId) {
+	public void remove(final UUID employeeId) {
 		findById(employeeId)
 		.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND)))
 		.blockOptional()
-				.ifPresent((employee) -> employeeRepository.deleteById(employeeId));
+		.ifPresent((employee) -> employeeRepository.deleteById(employeeId));
 	}
 
 	@Override

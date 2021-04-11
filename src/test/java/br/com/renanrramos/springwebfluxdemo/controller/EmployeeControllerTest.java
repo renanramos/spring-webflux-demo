@@ -165,7 +165,7 @@ public class EmployeeControllerTest {
 		ResponseEntity<Object> responseEntity = employeeController.removeEmployee(EMPLOYEE_ID);
 
 		assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
-		verify(mockEmployeeService, times(1)).removeEmployee(EMPLOYEE_ID);
+		verify(mockEmployeeService, times(1)).remove(EMPLOYEE_ID);
 	}
 
 	@Test
@@ -178,7 +178,7 @@ public class EmployeeControllerTest {
 		} catch (ResponseStatusException e) {
 			assertThat(e.getStatus(), equalTo(notFoundExcepton.getStatus()));
 			assertThat(e.getReason(), equalTo(notFoundExcepton.getReason()));
-			verify(mockEmployeeService, never()).removeEmployee(EMPLOYEE_ID);
+			verify(mockEmployeeService, never()).remove(EMPLOYEE_ID);
 		}
 	}
 

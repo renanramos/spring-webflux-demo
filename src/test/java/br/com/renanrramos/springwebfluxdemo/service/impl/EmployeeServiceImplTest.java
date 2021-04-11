@@ -83,7 +83,7 @@ public class EmployeeServiceImplTest {
 	@Test
 	public void removeEmployee_withEmployeeId_shouldRemoveSuccessfully() {
 		when(mockEmployeeRepository.findById(EMPLOYEE_ID)).thenReturn(Optional.of(CommonUtils.getEmployeeInstance()));
-		employeeServiceImpl.removeEmployee(EMPLOYEE_ID);
+		employeeServiceImpl.remove(EMPLOYEE_ID);
 		verify(mockEmployeeRepository, times(1)).deleteById(EMPLOYEE_ID);
 	}
 

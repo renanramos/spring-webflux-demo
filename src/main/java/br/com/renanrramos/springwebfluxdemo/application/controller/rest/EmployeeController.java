@@ -48,10 +48,10 @@ public class EmployeeController {
 
 		Employee employee = EmployeeCreateMapper.INSTANCE.mapEmployeeFrom(employeeForm);
 
-		Optional<Employee> empOptional = Optional.ofNullable(employeeService.create(employee));
-
+		Optional<Employee> empOptional = Optional.of(employeeService.create(employee));
+		
 		empOptional
-		.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM));
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM));
 
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
@@ -81,7 +81,7 @@ public class EmployeeController {
 	@DeleteMapping(path = "/{id}")
 	@ApiOperation(value = "Delete an employee")
 	public ResponseEntity<Object> removeEmployee(@PathVariable("id") final UUID employeeId) {
-		employeeService.removeEmployee(employeeId);
+		employeeService.remove(employeeId);
 		return ResponseEntity.ok().build();
 	}
 
