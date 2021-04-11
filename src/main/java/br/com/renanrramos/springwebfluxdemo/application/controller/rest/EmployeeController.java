@@ -1,6 +1,5 @@
-package br.com.renanrramos.springwebfluxdemo.controller.rest;
+package br.com.renanrramos.springwebfluxdemo.application.controller.rest;
 
-import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,10 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import br.com.renanrramos.springwebfluxdemo.form.EmployeeForm;
-import br.com.renanrramos.springwebfluxdemo.messages.constants.Messages;
-import br.com.renanrramos.springwebfluxdemo.model.Employee;
-import br.com.renanrramos.springwebfluxdemo.service.EmployeeService;
+import br.com.renanrramos.springwebfluxdemo.application.controller.mapper.EmployeeCreateMapper;
+import br.com.renanrramos.springwebfluxdemo.application.form.EmployeeForm;
+import br.com.renanrramos.springwebfluxdemo.application.messages.constants.Messages;
+import br.com.renanrramos.springwebfluxdemo.application.model.Employee;
+import br.com.renanrramos.springwebfluxdemo.infra.service.EmployeeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import reactor.core.publisher.Flux;
@@ -41,27 +41,21 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeService;
 
-	private URI uri;
-
 	@ResponseBody
 	@PostMapping
 	@ApiOperation(value = "Add new employee")
 	public ResponseEntity<Mono<Employee>> create(@Valid @RequestBody final EmployeeForm employeeForm, final UriComponentsBuilder uriBuilder) {
-		
-		Employee employee = Employee.builder()
-				.department(employeeForm.getDepartment())
-				.name(employeeForm.getName())
-				.build();
-		
-		Optional<Employee> empOptional = Optional.ofNullable(employeeService.create(employee));
-		
-		empOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM));
 
-		uri = createEmployeeUri(uriBuilder, empOptional.get().getId());
+		Employee employee = EmployeeCreateMapper.INSTANCE.mapEmployeeFrom(employeeForm);
+
+		Optional<Employee> empOptional = Optional.ofNullable(employeeService.create(employee));
+
+		empOptional
+		.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.INVALID_EMPLOYEE_FORM));
 
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
-				.location(uri)
+				.location(employeeService.buildEmployeeUri(uriBuilder, empOptional.get().getId()))
 				.body(Mono.just(empOptional.get()));
 	}
 
@@ -77,10 +71,10 @@ public class EmployeeController {
 	@ApiOperation(value = "Get employee by id")
 	public ResponseEntity<Mono<Employee>> findEmployee(@PathVariable("id") final UUID employeeId) {
 		return ResponseEntity
-					.status(HttpStatus.OK)
-					.body(employeeService
-							.findById(employeeId)
-							.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND))));
+				.status(HttpStatus.OK)
+				.body(employeeService
+						.findById(employeeId)
+						.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.EMPLOYEE_NOT_FOUND))));
 	}
 
 	@ResponseBody
@@ -95,26 +89,13 @@ public class EmployeeController {
 	@PutMapping(path = "/{id}")
 	@ApiOperation(value = "Update an employee")
 	public ResponseEntity<Mono<Employee>> updateEmployee(@PathVariable("id") final UUID employeeId, @RequestBody final EmployeeForm employeeForm, final UriComponentsBuilder uriBuilder) {
-		Employee employee = Employee.builder()
-				.id(employeeId)
-				.name(employeeForm.getName())
-				.department(employeeForm.getDepartment())
-				.build();
-		
+		Employee employee = EmployeeCreateMapper.INSTANCE.mapEmployeeFrom(employeeForm);
+
 		Employee updatedEmployee = employeeService.update(employee);
-		
-		uri = createEmployeeUri(uriBuilder, updatedEmployee.getId());
-		
+
 		return ResponseEntity
 				.status(HttpStatus.ACCEPTED)
-				.location(uri)
+				.location(employeeService.buildEmployeeUri(uriBuilder, updatedEmployee.getId()))
 				.body(Mono.just(updatedEmployee));
-	}
-
-	private URI createEmployeeUri(final UriComponentsBuilder uriBuilder, final UUID employeeId) {
-		return uriBuilder.path("/employees/{id}")
-				.buildAndExpand(employeeId)
-				.encode()
-				.toUri();
 	}
 }

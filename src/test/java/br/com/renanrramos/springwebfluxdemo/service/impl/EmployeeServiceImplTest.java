@@ -7,7 +7,6 @@ import static br.com.renanrramos.springwebfluxdemo.common.Constants.EMPLOYEE_NAM
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
@@ -15,7 +14,6 @@ import static org.mockito.Mockito.times;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -25,10 +23,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import br.com.renanrramos.springwebfluxdemo.application.model.Employee;
 import br.com.renanrramos.springwebfluxdemo.common.CommonUtils;
-import br.com.renanrramos.springwebfluxdemo.model.Employee;
-import br.com.renanrramos.springwebfluxdemo.repository.EmployeeRepository;
+import br.com.renanrramos.springwebfluxdemo.infra.repository.EmployeeRepository;
+import br.com.renanrramos.springwebfluxdemo.infra.service.impl.EmployeeServiceImpl;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -41,7 +42,13 @@ public class EmployeeServiceImplTest {
 
 	@Mock
 	private EmployeeRepository mockEmployeeRepository;
-	
+
+	@Mock
+	private UriComponentsBuilder mockUriBuilder;
+
+	@Mock
+	private UriComponents mockUriComponents;
+
 	@Test
 	public void create_withEmployee_shouldReturnEmployee() {
 		Employee employee = CommonUtils.getEmployeeInstance();
@@ -56,7 +63,7 @@ public class EmployeeServiceImplTest {
 	public void findAll_withEmployeeInitialized_shouldReturnListSuccessfully() {
 
 		when(mockEmployeeRepository.findAll()).thenReturn(Arrays.asList(CommonUtils.getEmployeeInstance()));
-		
+
 		Flux<Employee> fluxEmployees = employeeServiceImpl.findAll();
 		List<Employee> employees = fluxEmployees.toStream().collect(Collectors.toList());
 
@@ -84,9 +91,9 @@ public class EmployeeServiceImplTest {
 	public void updateEmployee_withValidEmployee_shouldUpdateSuccessfully() {
 		Employee employee = CommonUtils.getEmployeeInstance();
 		employee.setId(EMPLOYEE_ID);
-		
+
 		when(mockEmployeeRepository.save(any(Employee.class))).thenReturn(CommonUtils.getEmployeeInstance());
-		
+
 		Employee updatedEmployee = employeeServiceImpl.update(employee);
 
 		checkEmployee(updatedEmployee);
@@ -95,6 +102,6 @@ public class EmployeeServiceImplTest {
 	private void checkEmployee(Employee updatedEmployee) {
 		assertThat(updatedEmployee.getId(), is(EMPLOYEE_ID));
 		assertThat(updatedEmployee.getName(), is(EMPLOYEE_NAME));
-		assertThat(updatedEmployee.getDepartment(), is(EMPLOYEE_DEPARTMENT));
+		assertThat(updatedEmployee.getDepartment().getName(), is(EMPLOYEE_DEPARTMENT));
 	}
 }

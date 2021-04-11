@@ -1,14 +1,16 @@
-package br.com.renanrramos.springwebfluxdemo.form;
+package br.com.renanrramos.springwebfluxdemo.application.form;
 
 import javax.validation.constraints.NotBlank;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.With;
 
 @Getter
 @Setter
 @Builder
+@With
 public class EmployeeForm {
 
 	@NotBlank
@@ -18,7 +20,7 @@ public class EmployeeForm {
 	private String department;
 
 	public EmployeeForm() {
-		
+
 	}
 
 	public EmployeeForm(@NotBlank final String name, @NotBlank final String department) {

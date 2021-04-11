@@ -1,34 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.4.2</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.renanrramos</groupId>
 	<artifactId>spring-webflux-demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>spring-webflux-demo</name>
 	<description>Demo project for Spring Boot using Spring Webflux</description>
-	
+
 	<developers>
-        <developer>
-            <email>renanrramossi@gmail.com</email>
-            <name>Renan R Ramos</name>
-            <url>https://github.com/renanramos</url>
-            <id>renanrramos</id>
-        </developer>
-    </developers>
-	
+		<developer>
+			<email>renanrramossi@gmail.com</email>
+			<name>Renan R Ramos</name>
+			<url>https://github.com/renanramos</url>
+			<id>renanrramos</id>
+		</developer>
+	</developers>
+
 	<properties>
 		<java.version>1.8</java.version>
 		<h2.version>1.4.194</h2.version>
 		<swagger.version>2.9.2</swagger.version>
 		<hibernate-validator.version>6.0.10.Final</hibernate-validator.version>
 		<mockito-core.version>3.2.4</mockito-core.version>
+		<mapstruct.version>1.4.2.Final</mapstruct.version>
+		<org.mapstruct.processor>1.4.2.Final</org.mapstruct.processor>
+		<lombok.processor>1.18.20</lombok.processor>
 	</properties>
 
 	<dependencies>
@@ -48,23 +52,37 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-data-jpa</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-validator</artifactId>
-		    <version>${hibernate-validator.version}</version>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
 		</dependency>
-		
-		<!--  Swagger -->
+
+		<!-- MapStruct -->
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+
+		<!-- Swagger -->
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
@@ -88,40 +106,40 @@
 			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	
+
 		<!-- Junit 5 -->
 		<dependency>
-		    <groupId>org.junit.jupiter</groupId>
-		    <artifactId>junit-jupiter-api</artifactId>
-		    <scope>test</scope>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.junit.jupiter</groupId>
-		    <artifactId>junit-jupiter-engine</artifactId>
-		    <scope>test</scope>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.junit.platform</groupId>
-		    <artifactId>junit-platform-launcher</artifactId>
-		    <scope>test</scope>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
 
 		<!-- H2 database -->
 		<dependency>
-		    <groupId>com.h2database</groupId>
-		    <artifactId>h2</artifactId>
-		    <scope>runtime</scope>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Mockito extention -->
 		<dependency>
-		    <groupId>org.mockito</groupId>
-		    <artifactId>mockito-junit-jupiter</artifactId>
-		    <scope>test</scope>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -132,41 +150,33 @@
 	</dependencies>
 
 	<build>
-		<resources>     
-	        <resource>
-	            <directory>src/main/resources</directory>
-	            <includes>                      
-	                <include>**/*.properties</include>                  
-	            </includes>
-	        </resource>            
-	    </resources>
 		<plugins>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.2</version>
 				<executions>
-		  	      <execution>
-				    <goals>
-				      <goal>prepare-agent</goal>
-				    </goals>
-				  </execution>
-				  <execution>
-				     <id>report</id>
-				     <phase>test</phase>
-				     <goals>
-				       <goal>report</goal>				       
-				     </goals>
-				  </execution>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-surefire-plugin</artifactId>
-			    <configuration>
-			        <reuseForks>false</reuseForks>
-			        <forkCount>1</forkCount>
-			    </configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<reuseForks>false</reuseForks>
+					<forkCount>1</forkCount>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -178,6 +188,80 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version><!--$NO-MVN-MAN-VER$ -->
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.mapstruct.extensions.spring</groupId>
+							<artifactId>mapstruct-spring-extensions</artifactId>
+							<version>${org.mapstruct.extensions.spring.version}</version>
+						</path>
+					</annotationProcessorPaths>
+					<!-- due to problem in maven-compiler-plugin, for verbose mode add showWarnings -->
+					<showWarnings>true</showWarnings>
+					<compilerArgs>
+						<arg>
+							-Amapstruct.suppressGeneratorTimestamp=true
+						</arg>
+						<arg>
+							-Amapstruct.suppressGeneratorVersionInfoComment=true
+						</arg>
+						<arg>
+							-Amapstruct.verbose=true
+						</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<groupId>org.codehaus.mojo</groupId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>generated-src</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<includes>
+						<include>**</include>
+					</includes>
+					<testIncludes>
+						<include>**</include>
+					</testIncludes>
+					<compilerArgs>
+						<arg>-Xpkginfo:always</arg>
+					</compilerArgs>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.processor}</version>
+						</path>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${org.mapstruct.processor}</version>
+						</path>
+					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -20,7 +20,7 @@ import lombok.With;
 @ToString
 @Entity
 @With
-public class Employee {
+public class Department {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,15 +29,12 @@ public class Employee {
 
 	private String name;
 
-	private Department department;
-
-	public Employee() {
-
-	}
-
-	public Employee(final UUID id, final String name, final Department department) {
+	public Department(UUID id, String name) {
 		this.id = id;
 		this.name = name;
-		this.department = department;
+	}
+
+	public Department() {
+
 	}
 }

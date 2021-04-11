@@ -1,4 +1,4 @@
-package br.com.renanrramos.springwebfluxdemo.controller;
+package br.com.renanrramos.springwebfluxdemo.application;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

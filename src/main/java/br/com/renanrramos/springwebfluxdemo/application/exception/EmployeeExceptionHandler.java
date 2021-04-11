@@ -1,4 +1,4 @@
-package br.com.renanrramos.springwebfluxdemo.exception;
+package br.com.renanrramos.springwebfluxdemo.application.exception;
 
 import java.time.LocalDateTime;
 
@@ -20,13 +20,13 @@ import org.springframework.web.server.ResponseStatusException;
 public class EmployeeExceptionHandler {
 
 	@ExceptionHandler(ResponseStatusException.class)
-	protected ResponseEntity<Object> handleEntityNotFound(final ResponseStatusException ex) {
+	public ResponseEntity<Object> handleEntityNotFound(final ResponseStatusException ex) {
 		return handleResponseEntity(ex.getRawStatusCode(), ex.getReason());
 	}
 
 	@ExceptionHandler({HttpRequestMethodNotSupportedException.class})
 	@ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-	protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(final HttpRequestMethodNotSupportedException ex,
+	public ResponseEntity<Object> handleHttpRequestMethodNotSupported(final HttpRequestMethodNotSupportedException ex,
 			final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 		return handleResponseEntity(status.value(), ex.getMessage());
 	}

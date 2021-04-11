@@ -1,4 +1,4 @@
-package br.com.renanrramos.springwebfluxdemo.messages.constants;
+package br.com.renanrramos.springwebfluxdemo.application.messages.constants;
 
 public class Messages {
 
