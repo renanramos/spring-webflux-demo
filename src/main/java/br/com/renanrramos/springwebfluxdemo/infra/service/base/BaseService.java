@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 public interface BaseService<T> {
 
-	T create(final T e);
+	Mono<T> create(final T e);
 
 	Mono<T> findById(final UUID id);
 
@@ -20,5 +20,7 @@ public interface BaseService<T> {
 
 	T update(final T e);
 
-	URI buildEmployeeUri(final UriComponentsBuilder uriBuilder, final UUID id);
+	default public URI buildEmployeeUri(final String contextPath, final UriComponentsBuilder uriBuilder, final UUID id) {
+		return uriBuilder.path(contextPath).buildAndExpand(id).encode().toUri();
+	}
 }

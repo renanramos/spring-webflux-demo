@@ -54,7 +54,7 @@ public class EmployeeServiceImplTest {
 		Employee employee = CommonUtils.getEmployeeInstance();
 		when(mockEmployeeRepository.save(any(Employee.class))).thenReturn(employee);
 
-		Employee employeeCreated = employeeServiceImpl.create(employee);
+		Employee employeeCreated = employeeServiceImpl.create(employee).block();
 
 		checkEmployee(employeeCreated);
 	}

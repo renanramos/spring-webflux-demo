@@ -1,7 +1,5 @@
 package br.com.renanrramos.springwebfluxdemo.application.form;
 
-import java.util.UUID;
-
 import javax.validation.constraints.NotBlank;
 
 import lombok.Builder;
@@ -13,20 +11,17 @@ import lombok.With;
 @Setter
 @Builder
 @With
-public class EmployeeForm {
+public class DepartmentForm {
 
 	@NotBlank
 	private String name;
 
-	@NotBlank
-	private UUID departmentId;
-
-	public EmployeeForm() {
-
-	}
-
-	public EmployeeForm(@NotBlank final String name, @NotBlank final UUID departmentId) {
+	public DepartmentForm(@NotBlank final String name) {
 		this.name = name;
-		this.departmentId = departmentId;
 	}
+
+	public DepartmentForm() {
+
+	}
+
 }

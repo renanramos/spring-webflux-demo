@@ -4,9 +4,11 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +31,7 @@ public class Employee {
 
 	private String name;
 
+	@ManyToOne(targetEntity = Department.class, fetch = FetchType.EAGER)
 	private Department department;
 
 	public Employee() {

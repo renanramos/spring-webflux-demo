@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ public class EmployeeControllerTest {
 
 	@Test
 	public void create_withValidEmployee_shouldCreateSuccessfully() {
-		when(mockEmployeeService.create(any(Employee.class))).thenReturn(CommonUtils.getEmployeeInstance());
+		when(mockEmployeeService.create(any(Employee.class))).thenReturn(Mono.just(CommonUtils.getEmployeeInstance()));
 
 		ResponseEntity<Mono<Employee>> responseEntity = employeeController.create(CommonUtils.getEmployeeFormInstance(),
 				mockUriBuilder);
@@ -75,8 +76,8 @@ public class EmployeeControllerTest {
 	public void create_withEmptyEmployeeName_shouldReturnBadRequest() {
 
 		ResponseStatusException badRequestException = getResponseStatusException(HttpStatus.BAD_REQUEST,
-				Messages.INVALID_EMPLOYEE_FORM);
-		EmployeeForm invalidForm = EmployeeForm.builder().name("").department(EMPLOYEE_DEPARTMENT).build();
+				Messages.INVALID_FORM);
+		EmployeeForm invalidForm = EmployeeForm.builder().name("").departmentId(UUID.fromString(EMPLOYEE_NAME)).build();
 
 		when(mockEmployeeService.create(any(Employee.class))).thenThrow(badRequestException);
 
@@ -98,8 +99,9 @@ public class EmployeeControllerTest {
 	public void create_withEmptyEmployeeDepartment_shouldReturnBadRequest() {
 
 		ResponseStatusException badRequestException = getResponseStatusException(HttpStatus.BAD_REQUEST,
-				Messages.INVALID_EMPLOYEE_FORM);
-		EmployeeForm invalidForm = EmployeeForm.builder().name(EMPLOYEE_NAME).department("").build();
+				Messages.INVALID_FORM);
+		EmployeeForm invalidForm = EmployeeForm.builder().name(EMPLOYEE_NAME).departmentId(UUID.fromString(null))
+				.build();
 
 		when(mockEmployeeService.create(any(Employee.class))).thenThrow(badRequestException);
 

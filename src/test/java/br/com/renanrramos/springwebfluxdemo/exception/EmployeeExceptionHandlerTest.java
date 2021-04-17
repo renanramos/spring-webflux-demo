@@ -17,7 +17,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
-import br.com.renanrramos.springwebfluxdemo.application.exception.EmployeeExceptionHandler;
+import br.com.renanrramos.springwebfluxdemo.application.controller.exception.EmployeeExceptionHandler;
 import br.com.renanrramos.springwebfluxdemo.application.messages.constants.Messages;
 
 @ExtendWith(MockitoExtension.class)

@@ -1,5 +1,7 @@
 package br.com.renanrramos.springwebfluxdemo.common;
 
+import java.util.UUID;
+
 import br.com.renanrramos.springwebfluxdemo.application.form.EmployeeForm;
 import br.com.renanrramos.springwebfluxdemo.application.model.Department;
 import br.com.renanrramos.springwebfluxdemo.application.model.Employee;
@@ -12,6 +14,7 @@ public class CommonUtils {
 	}
 
 	public static EmployeeForm getEmployeeFormInstance() {
-		return new EmployeeForm().withName(Constants.EMPLOYEE_NAME).withDepartment(Constants.EMPLOYEE_DEPARTMENT);
+		return new EmployeeForm().withName(Constants.EMPLOYEE_NAME)
+				.withDepartmentId(UUID.fromString(Constants.EMPLOYEE_DEPARTMENT));
 	}
 }

@@ -1,4 +1,4 @@
-package br.com.renanrramos.springwebfluxdemo.application.exception;
+package br.com.renanrramos.springwebfluxdemo.application.controller.exception;
 
 import java.time.LocalDateTime;
 
@@ -19,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class EmployeeExceptionHandler {
 
-	@ExceptionHandler(ResponseStatusException.class)
+	@ExceptionHandler({ ResponseStatusException.class })
 	public ResponseEntity<Object> handleEntityNotFound(final ResponseStatusException ex) {
 		return handleResponseEntity(ex.getRawStatusCode(), ex.getReason());
 	}

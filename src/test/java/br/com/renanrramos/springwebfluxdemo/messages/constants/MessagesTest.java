@@ -24,14 +24,14 @@ public class MessagesTest {
 		Messages messages = new Messages();
 		assertThat(messages, notNullValue());
 	}
-	
+
 	@Test
 	public void employeeNotFound_verifyMessage() {
-	 assertThat(EMPLOYEE_NOT_FOUND, is(Messages.EMPLOYEE_NOT_FOUND));
+		assertThat(EMPLOYEE_NOT_FOUND, is(Messages.EMPLOYEE_NOT_FOUND));
 	}
 
 	@Test
 	public void invalidEmployeeForm_verifyMessage() {
-	 assertThat(INVALID_EMPLOYEE_FORM, is(Messages.INVALID_EMPLOYEE_FORM));
+		assertThat(INVALID_EMPLOYEE_FORM, is(Messages.INVALID_FORM));
 	}
 }

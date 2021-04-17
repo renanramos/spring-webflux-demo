@@ -1,14 +1,11 @@
 package br.com.renanrramos.springwebfluxdemo.infra.service.impl;
 
-import java.net.URI;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import br.com.renanrramos.springwebfluxdemo.application.messages.constants.Messages;
 import br.com.renanrramos.springwebfluxdemo.application.model.Employee;
 import br.com.renanrramos.springwebfluxdemo.infra.repository.EmployeeRepository;
@@ -23,8 +20,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 	private EmployeeRepository employeeRepository;
 
 	@Override
-	public Employee create(final Employee employee) {
-		return employeeRepository.save(employee);
+	public Mono<Employee> create(final Employee employee) {
+		return Mono.justOrEmpty(employeeRepository.save(employee));
 	}
 
 	@Override
@@ -50,8 +47,4 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return employeeRepository.save(employee);
 	}
 
-	@Override
-	public URI buildEmployeeUri(final UriComponentsBuilder uriBuilder, final UUID employeeId) {
-		return uriBuilder.path("/employees/{id}").buildAndExpand(employeeId).encode().toUri();
-	}
 }
